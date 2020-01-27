@@ -1,0 +1,4 @@
+ReactDOMRe.renderToElementWithId(
+  <Nonsense />,
+  "nonsense"
+);
