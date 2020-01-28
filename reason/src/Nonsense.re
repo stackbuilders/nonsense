@@ -16,9 +16,10 @@ let make = _ => {
       }
     );
 
-  let isVowel = letter => List.mem(letter, ['a', 'e', 'i', 'o', 'u']);
+  let isVowel = (letter: char): bool =>
+    List.mem(letter, ['a', 'e', 'i', 'o', 'u']);
 
-  let gotWord = (set: string, word: string) =>
+  let gotWord = (set: string, word: string): unit =>
     switch (set) {
     | "nouns"
     | "objects" =>
@@ -37,7 +38,7 @@ let make = _ => {
     ->Belt.Option.flatMap(words => Belt.Array.get(words, 0))
     ->Belt.Option.flatMap(Js.Json.decodeString);
 
-  let getWord = (~set: string) => {
+  let getWord = (~set: string): Js.Promise.t(unit) => {
     Fetch.fetch("https://api.noopschallenge.com/wordbot?set=" ++ set)
     |> Js.Promise.then_(Fetch.Response.json)
     |> Js.Promise.then_(json => {
