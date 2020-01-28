@@ -1,14 +1,13 @@
 {
   "name": "nonsense",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "bsb": "bsb",
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
     "serve": "moduleserve src/ --port 8000",
-    "refmt": "refmt"
+    "refmt": "bsrefmt"
   },
   "author": "",
   "license": "MIT",

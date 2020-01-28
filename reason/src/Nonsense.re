@@ -16,35 +16,26 @@ let make = _ => {
       }
     );
 
+  let isVowel = letter => List.mem(letter, ['a', 'e', 'i', 'o', 'u']);
+
   let gotWord = (set: string, word: string) =>
     switch (set) {
     | "nouns"
     | "objects" =>
       switch (Random.int(2)) {
       | 0 => gotWords(["the", word])
-      | _ when List.mem(String.get(word, 0), ['a', 'e', 'i', 'o', 'u']) => gotWords(["an", word])
+      | _ when isVowel(word.[0]) => gotWords(["an", word])
       | _ => gotWords(["a", word])
       }
     | _ => gotWords([word])
     };
 
   let decodeWord = (json: Js.Json.t): option(string) =>
-    switch (Js.Json.decodeObject(json)) {
-    | None => None
-    | Some(obj) =>
-      switch (Js.Dict.get(obj, "words")) {
-      | None => None
-      | Some(words) =>
-        switch (Js.Json.decodeArray(words)) {
-        | None => None
-        | Some(words) =>
-          switch (Js.Json.decodeString(words[0])) {
-          | None => None
-          | Some(word) => Some(word)
-          }
-        }
-      }
-    }
+    Js.Json.decodeObject(json)
+    ->Belt.Option.flatMap(object_ => Js.Dict.get(object_, "words"))
+    ->Belt.Option.flatMap(Js.Json.decodeArray)
+    ->Belt.Option.flatMap(words => Belt.Array.get(words, 0))
+    ->Belt.Option.flatMap(Js.Json.decodeString);
 
   let getWord = (~set: string) => {
     Fetch.fetch("https://api.noopschallenge.com/wordbot?set=" ++ set)
@@ -55,7 +46,7 @@ let make = _ => {
          | Some(word) => gotWord(set, word)
          };
          Js.Promise.resolve();
-       })
+       });
   };
 
   React.useEffect0(() => {
@@ -74,9 +65,9 @@ let make = _ => {
 
   <div>
     {switch (state) {
-     | Error => React.string("Error")
+     | Error => React.string("Error!")
      | Words([]) => React.string("Loading...")
      | Words(words) => React.string(String.concat(" ", words))
-    }}
+     }}
   </div>;
 };

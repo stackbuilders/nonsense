@@ -1,4 +1,1 @@
-ReactDOMRe.renderToElementWithId(
-  <Nonsense />,
-  "nonsense"
-);
+ReactDOMRe.renderToElementWithId(<Nonsense />, "nonsense");
